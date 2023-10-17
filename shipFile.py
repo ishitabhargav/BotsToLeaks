@@ -1,5 +1,4 @@
 import numpy as np
-from collections import deque
 import heapq
 
 
@@ -18,14 +17,13 @@ def getValidNeighbors(row, col, size) -> list[(int, int)]:  # neighbors that are
 
 def numOpenNeighbors(validNeighbors, arr) -> int:
     count = 0
-    for neighbor in validNeighbors:  # count the number of open neighbors. if more than 1, we should remove this neighbor from the closed list
-        if arr[neighbor[0]][neighbor[1]][0] == 1:
+    for neighbor in validNeighbors:
+        if arr[neighbor[0]][neighbor[1]][0] == 1: # count the number of open neighbors
             count = count + 1
     return count
 
 
-def addNeighbors(row, col, arr, closedNeighbors,
-                 size):  # adding inbound, closed, and not in closedNeighbors list neighbors to closedNeighbors
+def addToClosedNeighbors(row, col, arr, closedNeighbors, size):  # adding inbound, closed, and not in closedNeighbors list neighbors to closedNeighbors
     validNeighbors = getValidNeighbors(row, col, size)
     for neighbor in validNeighbors:
         if arr[neighbor[0]][neighbor[1]][0] == 0 and neighbor not in closedNeighbors and numOpenNeighbors(
@@ -150,7 +148,7 @@ class Ship:
                     if numOpenNeighbors(self.neighborsOfClosed, self.arr) > 1 and neighbor in self.closedNeighbors:
                         self.closedNeighbors.remove(neighbor)
             # 3. add the closed neighbors of neighborToOpen
-            addNeighbors(self.rowToOpen, self.colToOpen, self.arr, self.closedNeighbors, self.size)
+            addToClosedNeighbors(self.rowToOpen, self.colToOpen, self.arr, self.closedNeighbors, self.size)
 
         self.deadEnds = []
         for cell in self.openCells:
