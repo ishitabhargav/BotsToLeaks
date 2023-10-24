@@ -123,13 +123,13 @@ def findDistanceBetweenBot1(x1, y1, x2, y2, size, arr, firstCellOnFire) -> int:
 class Ship:
     def __init__(self):
         self.size = 30
-        self.arr = np.zeros((self.size, self.size, 2))
+        self.arr = np.zeros((self.size, self.size, 1))
         self.randRow = np.random.randint(1, self.size - 1)
         self.randCol = np.random.randint(1, self.size - 1)
         self.arr[self.randRow][self.randCol][0] = 1  # open first cell
         self.closedNeighbors = []
-        self.openCells = [[self.randRow, self.randCol]]
-        addNeighbors(self.randRow, self.randCol, self.arr, self.closedNeighbors, self.size)
+        self.openCells = [(self.randRow, self.randCol)]
+        addToClosedNeighbors(self.randRow, self.randCol, self.arr, self.closedNeighbors, self.size)
 
         while self.closedNeighbors:  # choose a closed neighbor at random to open, from list of closed cells with one open neighbor
             # 1. pick a closed neighbor and open it at random
@@ -139,7 +139,7 @@ class Ship:
             self.rowToOpen = self.neighborToOpen[0]
             self.colToOpen = self.neighborToOpen[1]
             self.arr[self.rowToOpen][self.colToOpen][0] = 1
-            self.openCells.append([self.rowToOpen, self.colToOpen])
+            self.openCells.append((self.rowToOpen, self.colToOpen))
             # 2. remove existing neighbors in closedNeighbors that now have 2 or more open neighbors
             self.validNeighbors = getValidNeighbors(self.rowToOpen, self.colToOpen, self.size)
             for neighbor in self.validNeighbors:
@@ -157,17 +157,18 @@ class Ship:
 
         self.origNumDeadEnds = len(self.deadEnds)
 
+        # open a deadend's neighbor until at least 50% of deadends are gone
         while len(self.deadEnds) > 0.50 * self.origNumDeadEnds:
             randCell = np.random.randint(0, len(self.deadEnds))
             deadEnd = self.deadEnds.pop(randCell)
-            deadEndsClosedNeighbors = []
+            deadEndClosedNeighbors = []
             validNeighbors = getValidNeighbors(deadEnd[0], deadEnd[1], self.size)
             for neighbor in validNeighbors:  # can change to x, y
                 if self.arr[neighbor[0]][neighbor[1]][0] == 0:
-                    deadEndsClosedNeighbors.append(neighbor)
-            if not deadEndsClosedNeighbors:
-                randCell2 = np.random.randint(0, len(deadEndsClosedNeighbors))
-                deadEndNeighbor = deadEndsClosedNeighbors.pop(randCell2)
+                    deadEndClosedNeighbors.append(neighbor)
+            if deadEndClosedNeighbors: # used to be "if not deadEndClosedNeighbors"
+                randCell2 = np.random.randint(0, len(deadEndClosedNeighbors))
+                deadEndNeighbor = deadEndClosedNeighbors.pop(randCell2)
                 self.arr[deadEndNeighbor[0]][deadEndNeighbor[1]][0] = 1
                 for deadEnd in self.deadEnds:
                     if numOpenNeighbors(getValidNeighbors(deadEnd[0], deadEnd[1], self.size), self.arr) != 1:
