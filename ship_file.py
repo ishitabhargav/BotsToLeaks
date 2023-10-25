@@ -1,7 +1,7 @@
 import numpy as np
 import heapq
 
-
+# MAKE SURE TO DELETE FUNCTIONS NOT USED
 def getValidNeighbors(row, col, size) -> list[(int, int)]:  # neighbors that are inbounds
     validNeighbors = []
     if row + 1 < size:
@@ -122,7 +122,7 @@ def findDistanceBetweenBot1(x1, y1, x2, y2, size, arr, firstCellOnFire) -> int:
 
 class Ship:
     def __init__(self):
-        self.size = 30
+        self.size = 50
         self.arr = np.zeros((self.size, self.size, 1))
         self.randRow = np.random.randint(1, self.size - 1)
         self.randCol = np.random.randint(1, self.size - 1)
@@ -181,13 +181,10 @@ class Ship:
         self.arr[self.firstCellOnFire[0]][self.firstCellOnFire[1]][0] = 2  # this cell is on fire
         self.indexBot = np.random.randint(0, len(self.openCells))
         self.bot = self.openCells.pop(self.indexBot)
-        self.indexButton = np.random.randint(0, len(self.openCells))
-        self.button = self.openCells.pop(self.indexButton)
 
         # add the cells back into the openCells list
-        self.openCells.append(self.firstCellOnFire)
-        self.openCells.append(self.bot)
-        self.openCells.append(self.button)
+        # self.openCells.append(self.leak)
+        self.openCells.append(self.bot)'''
 
         '''for row in self.arr:
             for col in row:
